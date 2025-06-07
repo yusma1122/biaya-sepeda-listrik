@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Biaya Sepeda Listrik</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'ebike': '#10b981',
+                        'motor': '#ef4444',
+                        'compare': '#3b82f6'
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 py-6">
+            <h1 class="text-3xl font-bold text-gray-900">🚴‍♂️ Kalkulator Biaya Sepeda Listrik</h1>
+            <p class="mt-2 text-gray-600">Analisis lengkap biaya operasional dan ROI untuk investasi e-bike Anda</p>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Main Calculator -->
+            <div class="flex-1 space-y-6 lg:mr-80">
+                <!-- E-bike Specifications -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-ebike">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">📋 Spesifikasi E-bike</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Voltase Baterai (V)</label>
+                            <input type="number" id="voltage" value="48" min="24" max="72" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Apa itu Voltase?</p>
+                                <p>Voltase adalah "kekuatan listrik" baterai e-bike Anda. Seperti tekanan air dalam selang - semakin tinggi voltase, semakin kuat tenaga motor. Biasanya: 36V (standar), 48V (sedang), 60V+ (kencang). Cek stiker di baterai atau buku manual.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kapasitas Baterai (Ah)</label>
+                            <input type="number" id="capacity" value="20" min="5" max="50" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Apa itu Kapasitas (Ah)?</p>
+                                <p>Ah = Ampere Hour, artinya "berapa lama baterai bisa menyuplai listrik". Ibarat tangki bensin - semakin besar Ah, semakin jauh bisa jalan. Contoh: 10Ah (jarak pendek), 20Ah (jarak sedang), 30Ah+ (jarak jauh). Tertulis di baterai atau spesifikasi.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Range per Charge (km)</label>
+                            <input type="number" id="range" value="60" min="20" max="150" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Apa itu Range?</p>
+                                <p>Range = jarak tempuh sekali charge penuh. Seperti motor bensin dengan tangki penuh bisa berapa km. Biasanya tertulis di brosur (contoh: "60km sekali charge"). PENTING: ini jarak ideal - di praktik bisa lebih pendek tergantung jalanan dan cara berkendara.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tarif Listrik (Rp/kWh)</label>
+                            <input type="number" id="electricity_rate" value="1467" min="500" max="3000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-gray-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Apa itu Tarif Listrik?</p>
+                                <p>Ini harga listrik PLN per kWh (kilo Watt hour). Seperti harga bensin per liter, tapi untuk listrik. Cek tagihan listrik rumah Anda, biasanya tertulis "Rp/kWh". Standar PLN: Rp 1.467/kWh (2025). Kalau tidak tahu, pakai angka default ini.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Usage Pattern -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-ebike">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">🚗 Pola Penggunaan</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jarak Harian (km)</label>
+                            <input type="number" id="daily_distance" value="30" min="1" max="200" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-blue-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Jarak yang Anda tempuh setiap hari</p>
+                                <p>Contoh: rumah ke kantor PP = 15km, berarti total harian 30km. Atau rumah-pasar-sekolah-rumah = 25km. Hitung semua perjalanan dalam 1 hari, bukan sekali jalan saja.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Hari Aktif per Minggu</label>
+                            <input type="number" id="active_days" value="6" min="1" max="7" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-blue-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Berapa hari Anda pakai e-bike dalam seminggu?</p>
+                                <p>Contoh: kerja Senin-Sabtu = 6 hari. Atau cuma weekdays = 5 hari. Kalau kadang libur atau WFH, kurangi jadi 4-5 hari. Ini untuk hitung biaya yang realistis.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Mode Berkendara</label>
+                            <select id="driving_mode" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                                <option value="0.9">Eco (90% efisiensi)</option>
+                                <option value="0.8" selected>Normal (80% efisiensi)</option>
+                                <option value="0.7">Sport (70% efisiensi)</option>
+                            </select>
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-blue-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Cara Anda berkendara sehari-hari</p>
+                                <p><strong>Eco:</strong> Pelan-pelan, hemat baterai, cocok jarak jauh<br>
+                                <strong>Normal:</strong> Standar, seimbang kecepatan & hemat<br>
+                                <strong>Sport:</strong> Ngebut, boros baterai tapi cepat sampai</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Kondisi Medan</label>
+                            <select id="terrain" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-ebike">
+                                <option value="1.0">Datar (100%)</option>
+                                <option value="1.2" selected>Campuran (120%)</option>
+                                <option value="1.5">Berbukit (150%)</option>
+                            </select>
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-blue-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Seperti apa jalanan yang biasa Anda lewati?</p>
+                                <p><strong>Datar:</strong> Jalan lurus, tidak ada tanjakan (hemat baterai)<br>
+                                <strong>Campuran:</strong> Ada naik-turun, tapi tidak terlalu curam<br>
+                                <strong>Berbukit:</strong> Banyak tanjakan curam (boros baterai)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROI Analysis -->
+                <div class="bg-white rounded-lg shadow-lg p-6 border-l-4 border-compare">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">💰 Analisis ROI</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Harga Beli E-bike (Rp)</label>
+                            <input type="number" id="ebike_price" value="15000000" min="5000000" max="50000000" step="100000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-compare">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-purple-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Berapa harga e-bike yang mau Anda beli?</p>
+                                <p>Masukkan harga e-bike yang sedang Anda pertimbangkan. Contoh: Rp 15.000.000 untuk e-bike kelas menengah. Ini untuk menghitung kapan investasi Anda balik modal dan mulai menguntungkan.</p>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Biaya Bensin Motor per Minggu (Rp)</label>
+                            <input type="number" id="weekly_fuel_cost" value="150000" min="50000" max="500000" step="5000" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-motor">
+                            <div class="text-xs text-gray-600 mt-2 p-2 bg-red-50 rounded">
+                                <p class="font-medium text-gray-700 mb-1">💡 Berapa uang bensin motor Anda per minggu?</p>
+                                <p>Hitung berapa rupiah bensin yang Anda habiskan dalam 1 minggu dengan motor biasa. Contoh: isi bensin 3x seminggu @ Rp 50.000 = Rp 150.000. Ini untuk membandingkan penghematan jika pakai e-bike.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Methodology Toggle -->
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <button id="methodology-toggle" class="flex items-center justify-between w-full text-left">
+                        <h2 class="text-xl font-semibold text-gray-900">🔬 Metodologi Perhitungan</h2>
+                        <span id="methodology-icon" class="text-2xl">▼</span>
+                    </button>
+                    <div id="methodology-content" class="mt-4 space-y-4 hidden">
+                        <div class="bg-blue-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-blue-900 mb-2">1. Menghitung Energi Baterai</h3>
+                            <div class="text-blue-800 text-sm space-y-2">
+                                <p><strong>Penjelasan Mudah:</strong></p>
+                                <p>Bayangkan baterai e-bike seperti ember air. Voltase = seberapa deras air keluar, Kapasitas = seberapa besar ember.</p>
+                                <p><strong>Rumus:</strong> Energi = Voltase × Kapasitas</p>
+                                <p class="bg-white p-2 rounded">
+                                    <span id="energy-calculation">Contoh: 48V × 20Ah = 960Wh = 0.96kWh</span>
+                                </p>
+                                <p><strong>Artinya:</strong> Baterai bisa menyimpan 0.96 kWh listrik. Seperti tangki bensin yang muat 0.96 liter, tapi ini listrik.</p>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-green-900 mb-2">2. Kenapa Ada "Efisiensi"?</h3>
+                            <div class="text-green-800 text-sm space-y-2">
+                                <p><strong>Penjelasan Mudah:</strong></p>
+                                <p>Tidak semua listrik sampai ke roda. Ada yang "hilang" di jalan, seperti air dalam ember yang bocor sedikit.</p>
+                                <p><strong>3 Jenis "Kebocoran":</strong></p>
+                                <ul class="list-disc list-inside ml-2 space-y-1">
+                                    <li><strong>Saat Charge:</strong> 8% listrik hilang jadi panas (jadi tinggal 92%)</li>
+                                    <li><strong>Mode Berkendara:</strong> Eco hemat (90%), Normal (80%), Sport boros (70%)</li>
+                                    <li><strong>Medan Jalan:</strong> Datar hemat (100%), Tanjakan boros (120-150%)</li>
+                                </ul>
+                                <p class="bg-white p-2 rounded">
+                                    <span id="efficiency-calculation">Total efisiensi = 92% × 80% × 120% = 88.3%</span>
+                                </p>
+                                <p><strong>Artinya:</strong> Dari 1 kWh listrik yang kita bayar, hanya 88.3% yang benar-benar menggerakkan e-bike.</p>
+                            </div>
+                        </div>
+                        <div class="bg-purple-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-purple-900 mb-2">3. Menghitung Biaya</h3>
+                            <div class="text-purple-800 text-sm space-y-2">
+                                <p><strong>Penjelasan Mudah:</strong></p>
+                                <p>Seperti menghitung biaya bensin motor, tapi pakai listrik.</p>
+                                <p><strong>Langkah-langkah:</strong></p>
+                                <ol class="list-decimal list-inside ml-2 space-y-1">
+                                    <li>Hitung berapa kWh listrik yang dibutuhkan (termasuk yang "hilang")</li>
+                                    <li>Kalikan dengan harga listrik PLN per kWh</li>
+                                    <li>Bagi dengan jarak yang bisa ditempuh</li>
+                                    <li>Tambahkan biaya perawatan kecil (10%)</li>
+                                </ol>
+                                <p class="bg-white p-2 rounded">
+                                    <span id="cost-calculation">Contoh: 0.96 kWh × Rp 1.467 × 1.13 = Rp 1.590 per charge</span>
+                                </p>
+                                <p><strong>Artinya:</strong> Sekali charge habis Rp 1.590, bisa jalan 60km. Jadi per km cuma Rp 26.5!</p>
+                                <p><strong>Bandingkan:</strong> Motor bensin biasanya Rp 400-600 per km (tergantung harga bensin).</p>
+                            </div>
+                        </div>
+                        <div class="bg-yellow-50 p-4 rounded-lg">
+                            <h3 class="font-semibold text-yellow-900 mb-2">4. Menghitung Kapan Balik Modal</h3>
+                            <div class="text-yellow-800 text-sm space-y-2">
+                                <p><strong>Penjelasan Mudah:</strong></p>
+                                <p>Seperti nabung - setiap bulan Anda "hemat" uang bensin. Kapan total hemat = harga e-bike?</p>
+                                <p><strong>Contoh:</strong></p>
+                                <ul class="list-disc list-inside ml-2 space-y-1">
+                                    <li>Bensin motor: Rp 600.000/bulan</li>
+                                    <li>Listrik e-bike: Rp 50.000/bulan</li>
+                                    <li>Hemat per bulan: Rp 550.000</li>
+                                    <li>Harga e-bike: Rp 15.000.000</li>
+                                    <li><strong>Balik modal:</strong> 15.000.000 ÷ 550.000 = 27 bulan</li>
+                                </ul>
+                                <p><strong>Artinya:</strong> Setelah 27 bulan (2,3 tahun), e-bike sudah "gratis" dan mulai profit!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Fixed Results Sidebar for Desktop -->
+            <div class="hidden lg:block fixed right-4 top-20 w-80 max-h-[85vh] overflow-y-auto z-10">
+                <div class="bg-white rounded-lg shadow-xl p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">📊 Hasil Perhitungan</h2>
+                    
+                    <!-- E-bike Costs -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-ebike mb-3">💚 Biaya E-bike</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Per Charge:</span>
+                                <span id="cost-per-charge" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Per km:</span>
+                                <span id="cost-per-km" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Per Hari:</span>
+                                <span id="cost-daily" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Per Bulan:</span>
+                                <span id="cost-monthly" class="font-semibold">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Motor Costs -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-motor mb-3">🔴 Biaya Motor Bensin</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Per Minggu:</span>
+                                <span id="motor-weekly" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Per Bulan:</span>
+                                <span id="motor-monthly" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Per Tahun:</span>
+                                <span id="motor-yearly" class="font-semibold">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ROI Analysis -->
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-compare mb-3">📈 Analisis ROI</h3>
+                        <div class="space-y-2 text-sm">
+                            <div class="flex justify-between">
+                                <span>Penghematan/Bulan:</span>
+                                <span id="savings-monthly" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Balik Modal:</span>
+                                <span id="payback-period" class="font-semibold">-</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span>Profit 2 Tahun:</span>
+                                <span id="profit-2years" class="font-semibold">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Environmental Impact -->
+                    <div class="bg-green-50 p-4 rounded-lg mb-6">
+                        <h3 class="font-semibold text-green-800 mb-2">🌱 Dampak Lingkungan</h3>
+                        <div class="text-sm text-green-700">
+                            <div class="flex justify-between mb-1">
+                                <span>CO₂ Saved/Tahun:</span>
+                                <span id="co2-saved" class="font-semibold">-</span>
+                            </div>
+                            <p class="text-xs mt-2">Setara dengan menanam <span id="trees-equivalent" class="font-semibold">-</span> pohon</p>
+                        </div>
+                    </div>
+
+                    <!-- Tips -->
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">💡 Tips Hemat Energi</h3>
+                        <ul class="space-y-2 text-sm text-gray-700">
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Gunakan mode Eco untuk jarak jauh
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Charge baterai sebelum benar-benar habis
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Hindari akselerasi mendadak
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Perawatan rutin untuk efisiensi optimal
+                            </li>
+                            <li class="flex items-start">
+                                <span class="text-green-500 mr-2">•</span>
+                                Gunakan regenerative braking jika tersedia
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- ROI Timeline -->
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-3">⏱️ Timeline ROI</h3>
+                        <div class="space-y-3" id="roi-timeline">
+                            <!-- Timeline akan diisi oleh JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Results (below main content) -->
+        <div class="lg:hidden mt-8">
+            <div class="bg-white rounded-lg shadow-lg p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">📊 Hasil Perhitungan</h2>
+                
+                <!-- E-bike Costs -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-ebike mb-3">💚 Biaya E-bike</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Per Charge:</span>
+                            <span id="cost-per-charge-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Per km:</span>
+                            <span id="cost-per-km-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Per Hari:</span>
+                            <span id="cost-daily-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Per Bulan:</span>
+                            <span id="cost-monthly-mobile" class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Motor Costs -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-motor mb-3">🔴 Biaya Motor Bensin</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Per Minggu:</span>
+                            <span id="motor-weekly-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Per Bulan:</span>
+                            <span id="motor-monthly-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Per Tahun:</span>
+                            <span id="motor-yearly-mobile" class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROI Analysis -->
+                <div class="mb-6">
+                    <h3 class="font-semibold text-compare mb-3">📈 Analisis ROI</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Penghematan/Bulan:</span>
+                            <span id="savings-monthly-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Balik Modal:</span>
+                            <span id="payback-period-mobile" class="font-semibold">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Profit 2 Tahun:</span>
+                            <span id="profit-2years-mobile" class="font-semibold">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Environmental Impact -->
+                <div class="bg-green-50 p-4 rounded-lg mb-6">
+                    <h3 class="font-semibold text-green-800 mb-2">🌱 Dampak Lingkungan</h3>
+                    <div class="text-sm text-green-700">
+                        <div class="flex justify-between mb-1">
+                            <span>CO₂ Saved/Tahun:</span>
+                            <span id="co2-saved-mobile" class="font-semibold">-</span>
+                        </div>
+                        <p class="text-xs mt-2">Setara dengan menanam <span id="trees-equivalent-mobile" class="font-semibold">-</span> pohon</p>
+                    </div>
+                </div>
+
+                <!-- ROI Timeline Mobile -->
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-900 mb-3">⏱️ Timeline ROI</h3>
+                    <div class="space-y-3" id="roi-timeline-mobile">
+                        <!-- Timeline akan diisi oleh JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Format currency in Indonesian Rupiah
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+
+        // Format number with thousand separators
+        function formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        }
+
+        // Calculate all costs and ROI
+        function calculateAll() {
+            // Get input values
+            const voltage = parseFloat(document.getElementById('voltage').value);
+            const capacity = parseFloat(document.getElementById('capacity').value);
+            const range = parseFloat(document.getElementById('range').value);
+            const electricityRate = parseFloat(document.getElementById('electricity_rate').value);
+            const dailyDistance = parseFloat(document.getElementById('daily_distance').value);
+            const activeDays = parseInt(document.getElementById('active_days').value);
+            const drivingMode = parseFloat(document.getElementById('driving_mode').value);
+            const terrain = parseFloat(document.getElementById('terrain').value);
+            const ebikePrice = parseFloat(document.getElementById('ebike_price').value);
+            const weeklyFuelCost = parseFloat(document.getElementById('weekly_fuel_cost').value);
+
+            // Calculate battery energy
+            const batteryEnergyWh = voltage * capacity;
+            const batteryEnergyKwh = batteryEnergyWh / 1000;
+
+            // Calculate efficiency factors
+            const chargingEfficiency = 0.92; // 92% charging efficiency
+            const totalEfficiency = chargingEfficiency * drivingMode * terrain;
+
+            // Calculate costs
+            const energyPerCharge = batteryEnergyKwh / totalEfficiency;
+            const costPerCharge = energyPerCharge * electricityRate;
+            const costPerKm = costPerCharge / range;
+            
+            // Add maintenance and battery depreciation (10% of energy cost)
+            const maintenanceFactor = 1.1;
+            const adjustedCostPerKm = costPerKm * maintenanceFactor;
+            const adjustedCostPerCharge = costPerCharge * maintenanceFactor;
+
+            // Calculate daily and monthly costs
+            const costDaily = adjustedCostPerKm * dailyDistance;
+            const costWeekly = costDaily * activeDays;
+            const costMonthly = costWeekly * 4.33; // Average weeks per month
+
+            // Motor costs
+            const motorMonthly = weeklyFuelCost * 4.33;
+            const motorYearly = motorMonthly * 12;
+
+            // ROI calculations
+            const savingsMonthly = motorMonthly - costMonthly;
+            const paybackMonths = ebikePrice / savingsMonthly;
+            const profit2Years = (savingsMonthly * 24) - ebikePrice;
+
+            // Environmental impact (rough estimates)
+            const co2PerLiterGasoline = 2.31; // kg CO2 per liter
+            const kmPerLiter = 35; // average motorcycle efficiency
+            const literPerYear = (dailyDistance * activeDays * 52) / kmPerLiter;
+            const co2SavedKg = literPerYear * co2PerLiterGasoline;
+            const treesEquivalent = Math.round(co2SavedKg / 22); // 1 tree absorbs ~22kg CO2/year
+
+            // Update displays (desktop)
+            document.getElementById('cost-per-charge').textContent = formatCurrency(adjustedCostPerCharge);
+            document.getElementById('cost-per-km').textContent = formatCurrency(adjustedCostPerKm);
+            document.getElementById('cost-daily').textContent = formatCurrency(costDaily);
+            document.getElementById('cost-monthly').textContent = formatCurrency(costMonthly);
+
+            document.getElementById('motor-weekly').textContent = formatCurrency(weeklyFuelCost);
+            document.getElementById('motor-monthly').textContent = formatCurrency(motorMonthly);
+            document.getElementById('motor-yearly').textContent = formatCurrency(motorYearly);
+
+            document.getElementById('savings-monthly').textContent = formatCurrency(savingsMonthly);
+            document.getElementById('payback-period').textContent = `${Math.ceil(paybackMonths)} bulan`;
+            document.getElementById('profit-2years').textContent = formatCurrency(profit2Years);
+
+            document.getElementById('co2-saved').textContent = `${formatNumber(Math.round(co2SavedKg))} kg`;
+            document.getElementById('trees-equivalent').textContent = treesEquivalent;
+
+            // Update displays (mobile)
+            document.getElementById('cost-per-charge-mobile').textContent = formatCurrency(adjustedCostPerCharge);
+            document.getElementById('cost-per-km-mobile').textContent = formatCurrency(adjustedCostPerKm);
+            document.getElementById('cost-daily-mobile').textContent = formatCurrency(costDaily);
+            document.getElementById('cost-monthly-mobile').textContent = formatCurrency(costMonthly);
+
+            document.getElementById('motor-weekly-mobile').textContent = formatCurrency(weeklyFuelCost);
+            document.getElementById('motor-monthly-mobile').textContent = formatCurrency(motorMonthly);
+            document.getElementById('motor-yearly-mobile').textContent = formatCurrency(motorYearly);
+
+            document.getElementById('savings-monthly-mobile').textContent = formatCurrency(savingsMonthly);
+            document.getElementById('payback-period-mobile').textContent = `${Math.ceil(paybackMonths)} bulan`;
+            document.getElementById('profit-2years-mobile').textContent = formatCurrency(profit2Years);
+
+            document.getElementById('co2-saved-mobile').textContent = `${formatNumber(Math.round(co2SavedKg))} kg`;
+            document.getElementById('trees-equivalent-mobile').textContent = treesEquivalent;
+
+            // Update methodology examples
+            document.getElementById('energy-calculation').textContent = 
+                `Contoh: ${voltage}V × ${capacity}Ah = ${batteryEnergyWh}Wh = ${batteryEnergyKwh.toFixed(2)}kWh`;
+            
+            document.getElementById('efficiency-calculation').textContent = 
+                `Total efisiensi = 92% × ${(drivingMode*100).toFixed(0)}% × ${(terrain*100).toFixed(0)}% = ${(totalEfficiency*100).toFixed(1)}%`;
+            
+            document.getElementById('cost-calculation').textContent = 
+                `${batteryEnergyKwh.toFixed(2)}kWh × Rp${formatNumber(electricityRate)} × ${(1/totalEfficiency).toFixed(2)} = ${formatCurrency(costPerCharge)}`;
+
+            // Update ROI timeline (both desktop and mobile)
+            updateROITimeline(savingsMonthly, ebikePrice, costMonthly, motorMonthly);
+        }
+
+        // Update ROI timeline
+        function updateROITimeline(savingsMonthly, ebikePrice, costMonthly, motorMonthly) {
+            const timelineDesktop = document.getElementById('roi-timeline');
+            const timelineMobile = document.getElementById('roi-timeline-mobile');
+            const periods = [
+                { name: '6 Bulan', months: 6 },
+                { name: '1 Tahun', months: 12 },
+                { name: '2 Tahun', months: 24 },
+                { name: '5 Tahun', months: 60 }
+            ];
+
+            [timelineDesktop, timelineMobile].forEach(timeline => {
+                if (timeline) {
+                    timeline.innerHTML = '';
+
+                    periods.forEach(period => {
+                        const totalSavings = savingsMonthly * period.months;
+                        const netProfit = totalSavings - ebikePrice;
+                        const isProfit = netProfit > 0;
+
+                        const div = document.createElement('div');
+                        div.className = `p-3 rounded-lg ${isProfit ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+                        
+                        div.innerHTML = `
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">${period.name}</span>
+                                <span class="text-sm ${isProfit ? 'text-green-600' : 'text-red-600'} font-semibold">
+                                    ${formatCurrency(netProfit)}
+                                </span>
+                            </div>
+                            <div class="text-xs text-gray-600 mt-1">
+                                ${isProfit ? '✅ Sudah profit' : '❌ Belum balik modal'}
+                            </div>
+                        `;
+
+                        timeline.appendChild(div);
+                    });
+                }
+            });
+        }
+
+        // Methodology toggle
+        document.getElementById('methodology-toggle').addEventListener('click', function() {
+            const content = document.getElementById('methodology-content');
+            const icon = document.getElementById('methodology-icon');
+            
+            if (content.classList.contains('hidden')) {
+                content.classList.remove('hidden');
+                icon.textContent = '▲';
+            } else {
+                content.classList.add('hidden');
+                icon.textContent = '▼';
+            }
+        });
+
+        // Add event listeners for real-time calculation
+        const inputs = [
+            'voltage', 'capacity', 'range', 'electricity_rate',
+            'daily_distance', 'active_days', 'driving_mode', 'terrain',
+            'ebike_price', 'weekly_fuel_cost'
+        ];
+
+        inputs.forEach(id => {
+            document.getElementById(id).addEventListener('input', calculateAll);
+        });
+
+        // Initial calculation
+        calculateAll();
+    </script>
+</body>
+</html>
